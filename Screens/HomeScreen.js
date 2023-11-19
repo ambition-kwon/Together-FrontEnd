@@ -18,7 +18,7 @@ import SearchItem from '../Components/SearchItem';
 function HomeScreen() {
   const [searched, setSearched] = useState(false);
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <MainHeader />
       <Margin value={10} />
       <View style={styles.container1}>

@@ -3,12 +3,13 @@ import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MainHeader from '../Components/MainHeader';
 import Margin from '../Components/Margin';
-import RoomItem from '../Components/RoomItem';
+import LeaderItem from '../Components/LeaderItem';
+import MemberItem from '../Components/MemberItem';
 
 function TeamScreen() {
   const [toggle, setToggle] = useState(false);
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <MainHeader />
       <Margin value={11} />
       <View style={styles.toggleContainer}>
@@ -26,13 +27,30 @@ function TeamScreen() {
         </TouchableOpacity>
       </View>
       <Margin value={19} />
-      <RoomItem />
+      <View style={styles.subContainer}>
+        {!toggle ? (
+          <>
+            {/*TODO: 삭제 기능 만들기(1)*/}
+            <LeaderItem />
+            <LeaderItem />
+            <LeaderItem />
+          </>
+        ) : (
+          <>
+            {/*TODO: 삭제 기능 만들기(2)*/}
+            <MemberItem cases={'waiting'} />
+            <MemberItem cases={'pass'} />
+            <MemberItem cases={'fail'} />
+          </>
+        )}
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   toggleContainer: {flexDirection: 'row'},
+  subContainer: {flex: 1, marginHorizontal: 13},
   toggleText1: {fontSize: 21, fontWeight: '700', color: 'black'},
   toggleText2: {
     fontSize: 21,

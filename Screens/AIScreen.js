@@ -148,8 +148,8 @@ function AIScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
-  image: {width: '100%', height: 500},
+  container: {flex: 1, backgroundColor: 'white'},
+  image: {width: '100%', height: 490},
   d_day_container: {
     width: 62,
     height: 24,
