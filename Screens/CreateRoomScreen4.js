@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  TextInput,
   Alert,
   KeyboardAvoidingView,
   Platform,

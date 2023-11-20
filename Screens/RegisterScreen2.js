@@ -1,11 +1,15 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import IndicatorBar from '../Components/IndicatorBar';
 import Margin from '../Components/Margin';
 import NextIcon from '../Components/NextIcon';
+import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
 function RegisterScreen2() {
+  const {account, setAccount} = useContext(DataContext);
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <Margin value={19} />
@@ -20,8 +24,10 @@ function RegisterScreen2() {
       <TextInput
         style={styles.body}
         placeholder={null}
-        value={null}
-        onChangeText={null}
+        value={account.kakaotalkId}
+        onChangeText={text => {
+          setAccount({...account, kakaotalkId: text});
+        }}
         autoComplete={'off'}
         keyboardType={'default'}
         secureTextEntry={false}
@@ -31,7 +37,13 @@ function RegisterScreen2() {
         autoFocus={true}
       />
       <View style={styles.button}>
-        <NextIcon onPress={null} />
+        <NextIcon
+          onPress={() => {
+            if (account.kakaotalkId !== '') {
+              navigation.navigate('Register3');
+            }
+          }}
+        />
       </View>
     </SafeAreaView>
   );
@@ -40,6 +52,7 @@ function RegisterScreen2() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   header: {
     fontSize: 20,

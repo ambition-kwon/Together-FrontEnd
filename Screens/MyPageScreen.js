@@ -6,14 +6,19 @@ import {
   StatusBar,
   Image,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/Fontisto';
 import Icon1 from 'react-native-vector-icons/MaterialIcons';
+import Icon2 from 'react-native-vector-icons/Ionicons';
 import Margin from '../Components/Margin';
+import {useFocusEffect} from '@react-navigation/native';
 
 function MyPageScreen() {
   const insets = useSafeAreaInsets();
+  useFocusEffect(() => {
+    console.log('4번 스크린');
+  });
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <StatusBar barStyle={'white'} />
@@ -30,7 +35,7 @@ function MyPageScreen() {
         <View style={styles.imageContainer}>
           <Icon1 name={'person'} size={56} color={'black'} />
         </View>
-        <Margin value={20} />
+        <Margin value={30} />
         <View style={styles.nameContainer}>
           <View style={styles.subNameContainer1}>
             <Text style={styles.nameText}>감귤탕후루</Text>
@@ -39,7 +44,7 @@ function MyPageScreen() {
             <Text style={styles.nameText}>khw5390</Text>
           </View>
         </View>
-        <Margin value={37} />
+        <Margin value={50} />
         <View style={styles.roomContainer}>
           <View style={styles.subRoomContainer1}>
             <Text style={styles.roomText1}>개설한 방</Text>
@@ -64,7 +69,7 @@ function MyPageScreen() {
             style={{alignItems: 'center'}}
             activeOpacity={0.3}
             onPress={null}>
-            <Icon name={'heart'} size={30} color={'black'} />
+            <Icon2 name={'heart-outline'} size={30} color={'black'} />
             <Margin value={12} />
             <Text style={styles.iconText}>{'관심있는\n활동'}</Text>
           </TouchableOpacity>
@@ -105,7 +110,26 @@ function MyPageScreen() {
           <TouchableOpacity
             style={{alignItems: 'center'}}
             activeOpacity={0.3}
-            onPress={null}>
+            onPress={() => {
+              Alert.alert(
+                '알림',
+                '로그아웃 하시겠습니까?',
+                [
+                  {
+                    text: '취소',
+                    style: 'cancel',
+                  },
+                  {
+                    text: '로그아웃',
+                    onPress: () => {
+                      null; //TODO:여기에 화면 login으로 가도록 설정(reset으로)
+                    },
+                    style: 'destructive',
+                  },
+                ],
+                {cancelable: false},
+              );
+            }}>
             <Icon1 name={'logout'} size={30} color={'black'} />
             <Margin value={12} />
             <Text style={styles.iconText}>{'계정\n로그아웃'}</Text>

@@ -12,9 +12,13 @@ import MainHeader from '../Components/MainHeader';
 import Margin from '../Components/Margin';
 import TagItem from '../Components/TagItem';
 import AiIcon from '../Components/AiIcon';
+import {useFocusEffect} from '@react-navigation/native';
 
 function AIScreen() {
   const [toggle, setToggle] = useState(false);
+  useFocusEffect(() => {
+    console.log('2번 스크린');
+  });
   return (
     <SafeAreaView style={styles.container}>
       <MainHeader />

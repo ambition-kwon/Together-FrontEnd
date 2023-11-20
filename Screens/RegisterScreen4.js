@@ -2,9 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {Text, StyleSheet, Image} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Margin from '../Components/Margin';
+import {useNavigation} from '@react-navigation/native';
 
 function RegisterScreen4() {
   const [remainingTime, setRemainingTime] = useState(3);
+  const navigation = useNavigation();
   useEffect(() => {
     const intervalId = setInterval(() => {
       setRemainingTime(prevTime => prevTime - 1);
@@ -13,7 +15,7 @@ function RegisterScreen4() {
   }, []);
   useEffect(() => {
     if (remainingTime === 0) {
-      //TODO: 0초일 경우 실행할 함수 넣기
+      navigation.reset({routes: [{name: 'Login'}]});
     }
   }, [remainingTime]);
   return (
@@ -32,7 +34,12 @@ function RegisterScreen4() {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, alignItems: 'center', justifyContent: 'center'},
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+  },
   text1: {fontSize: 26, fontWeight: '700'},
   text2: {fontSize: 15, fontWeight: '500', color: 'rgba(0, 0, 0, 0.40)'},
 });

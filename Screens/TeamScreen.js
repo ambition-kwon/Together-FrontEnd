@@ -5,9 +5,13 @@ import MainHeader from '../Components/MainHeader';
 import Margin from '../Components/Margin';
 import LeaderItem from '../Components/LeaderItem';
 import MemberItem from '../Components/MemberItem';
+import {useFocusEffect} from '@react-navigation/native';
 
 function TeamScreen() {
   const [toggle, setToggle] = useState(false);
+  useFocusEffect(() => {
+    console.log('3번 스크린');
+  });
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <MainHeader />

@@ -1,17 +1,13 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import IndicatorBar from '../Components/IndicatorBar';
 import Margin from '../Components/Margin';
 import NextIcon from '../Components/NextIcon';
 import RegisterTag from '../Components/RegisterTag';
-import {useNavigation} from '@react-navigation/native';
-import DataContext from '../Contexts/DataContext';
-import axios from 'axios';
+import CheckIcon from '../Components/CheckIcon';
 
-function RegisterScreen3() {
-  const navigation = useNavigation();
-  const {server, account, setAccount} = useContext(DataContext);
+function EditTagScreen() {
   const [toggleList, setToggleList] = useState({
     '기획/아이디어': false,
     '논문/리포트': false,
@@ -38,43 +34,14 @@ function RegisterScreen3() {
       [toggleListKey[index]]: !prev[toggleListKey[index]],
     }));
   };
-  useEffect(() => {
-    const trueToggleListKey = Object.keys(toggleList).filter(
-      key => toggleList[key],
-    );
-    setAccount(prevAccount => ({
-      ...prevAccount,
-      tagList: trueToggleListKey,
-    }));
-  }, [toggleList]);
-  async function fetchData() {
-    try {
-      await axios.post(`${server}/join`, account);
-      console.log('회원가입 성공:', JSON.stringify(account, null, 2));
-      setAccount({
-        id: '',
-        password: '',
-        passwordConfirm: '',
-        name: '',
-        kakaotalkId: '',
-        tagList: [],
-      });
-      navigation.reset({routes: [{name: 'Register4'}]});
-    } catch (error) {
-      console.error('오류 발생:', error.message);
-    }
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <Margin value={19} />
-      <IndicatorBar value={3} />
       <Margin value={54} />
       <View style={{marginLeft: 33}}>
-        <Text style={styles.header}>
-          {'관심있는 분야를\n모두 선택해주세요'}
-        </Text>
+        <Text style={styles.header}>{'관심있는 분야를\n재설정 해 주세요'}</Text>
       </View>
+      {/*---------------------------------------------*/}
       <View style={styles.main}>
         <View style={styles.button0}>
           <RegisterTag
@@ -196,21 +163,16 @@ function RegisterScreen3() {
           />
         </View>
       </View>
+      {/*---------------------------------------------*/}
       <View style={styles.nextButton}>
-        <NextIcon
-          onPress={() => {
-            if (account.tagList.length !== 0) {
-              fetchData(); //TODO: 화면이동(reset) 및 account데이터 초기화
-            }
-          }}
-        />
+        <CheckIcon onPress={null} />
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: 'white'},
+  container: {flex: 1},
   main: {position: 'absolute', top: 30},
   header: {fontSize: 20, fontWeight: '700'},
   body: {
@@ -240,4 +202,4 @@ const styles = StyleSheet.create({
   button16: {position: 'absolute', top: 675, left: 21},
 });
 
-export default RegisterScreen3;
+export default EditTagScreen;

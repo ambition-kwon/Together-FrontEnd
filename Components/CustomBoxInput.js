@@ -8,6 +8,7 @@ function CustomBoxInput({
   autoComplete,
   keyboardType,
   secureTextEntry,
+  autoFocus,
 }) {
   return (
     <TextInput
@@ -24,6 +25,8 @@ function CustomBoxInput({
       autoCapitalize={'none'}
       autoCorrect={false}
       passwordRules={null}
+      autoFocus={autoFocus}
+      placeholderTextColor={'gray'}
     />
   );
 }

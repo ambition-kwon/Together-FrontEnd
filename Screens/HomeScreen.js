@@ -14,9 +14,13 @@ import Margin from '../Components/Margin';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ActivityItem from '../Components/ActivityItem';
 import SearchItem from '../Components/SearchItem';
+import {useFocusEffect} from '@react-navigation/native';
 
 function HomeScreen() {
   const [searched, setSearched] = useState(false);
+  useFocusEffect(() => {
+    console.log('1번 스크린');
+  });
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <MainHeader />
@@ -71,8 +75,8 @@ function HomeScreen() {
         )}
       </View>
       {!searched && (
-        <ScrollView>
-          <View style={styles.container1}>
+        <View style={styles.container1}>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <Margin value={24} />
             <View style={styles.subjectView}>
               <Text style={styles.subjectText}>{'실시간\n인기 활동👍'}</Text>
@@ -225,9 +229,9 @@ function HomeScreen() {
                 uri={null}
               />
             </ScrollView>
-            {/*-----------------------------------------------------------------*/}
-          </View>
-        </ScrollView>
+            <Margin value={70} />
+          </ScrollView>
+        </View>
       )}
       {/*Toggle End*/}
       {searched && (
