@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -12,20 +12,38 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icon1 from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/Ionicons';
 import Margin from '../Components/Margin';
-import {useFocusEffect} from '@react-navigation/native';
+import axios from 'axios';
+import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
 function MyPageScreen() {
+  useEffect(() => {
+    fetchData();
+  }, []);
   const insets = useSafeAreaInsets();
-  useFocusEffect(() => {
-    console.log('4번 스크린');
-  });
+  const navigation = useNavigation();
+  const {server, account, setAccount, accountInfo, setAccountInfo} =
+    useContext(DataContext);
+  async function fetchData() {
+    try {
+      const response = await axios.get(`${server}/my`, {
+        headers: {
+          memberId: account.id,
+        },
+      });
+      setAccountInfo(prev => response.data);
+      console.log('MyPage Load Success');
+    } catch (error) {
+      console.error('mypage 로드 오류:', error.message);
+    }
+  }
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <StatusBar barStyle={'white'} />
       <View style={{height: insets.top, backgroundColor: '#2F2E2C'}} />
       <View style={styles.container1}>
         <View style={styles.pointContainer}>
-          <Text style={styles.pointText}>15.3</Text>
+          <Text style={styles.pointText}>{accountInfo.point}</Text>
           <Image
             source={require('../Images/point.png')}
             style={styles.pointImage}
@@ -38,10 +56,10 @@ function MyPageScreen() {
         <Margin value={30} />
         <View style={styles.nameContainer}>
           <View style={styles.subNameContainer1}>
-            <Text style={styles.nameText}>감귤탕후루</Text>
+            <Text style={styles.nameText}>{accountInfo.name}</Text>
           </View>
           <View style={styles.subNameContainer2}>
-            <Text style={styles.nameText}>khw5390</Text>
+            <Text style={styles.nameText}>{account.id}</Text>
           </View>
         </View>
         <Margin value={50} />
@@ -56,10 +74,10 @@ function MyPageScreen() {
         <Margin value={12} />
         <View style={styles.roomContainer}>
           <View style={styles.subRoomContainer1}>
-            <Text style={styles.roomText2}>20</Text>
+            <Text style={styles.roomText2}>{accountInfo.createdRoomCnt}</Text>
           </View>
           <View style={styles.subRoomContainer2}>
-            <Text style={styles.roomText2}>6</Text>
+            <Text style={styles.roomText2}>{accountInfo.applyRoomCnt}</Text>
           </View>
         </View>
       </View>
@@ -68,7 +86,7 @@ function MyPageScreen() {
           <TouchableOpacity
             style={{alignItems: 'center'}}
             activeOpacity={0.3}
-            onPress={null}>
+            onPress={() => navigation.navigate('LikeActivity')}>
             <Icon2 name={'heart-outline'} size={30} color={'black'} />
             <Margin value={12} />
             <Text style={styles.iconText}>{'관심있는\n활동'}</Text>
@@ -76,15 +94,15 @@ function MyPageScreen() {
           <TouchableOpacity
             style={{alignItems: 'center'}}
             activeOpacity={0.3}
-            onPress={null}>
+            onPress={() => navigation.navigate('EditTag')}>
             <Icon1 name={'tag'} size={30} color={'black'} />
             <Margin value={12} />
-            <Text style={styles.iconText}>{'관심태그\n설정'}</Text>
+            <Text style={styles.iconText}>{'관심태그\n재설정'}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={{alignItems: 'center'}}
             activeOpacity={0.3}
-            onPress={null}>
+            onPress={() => navigation.navigate('EditKakao')}>
             <Icon1 name={'phone-iphone'} size={30} color={'black'} />
             <Margin value={12} />
             <Text style={styles.iconText}>{'연락처\n변경'}</Text>
@@ -94,7 +112,9 @@ function MyPageScreen() {
           <TouchableOpacity
             style={{alignItems: 'center'}}
             activeOpacity={0.3}
-            onPress={null}>
+            onPress={() => {
+              navigation.navigate('EditPassword');
+            }}>
             <Icon1 name={'password'} size={30} color={'black'} />
             <Margin value={12} />
             <Text style={styles.iconText}>{'비밀번호\n재설정'}</Text>
@@ -122,7 +142,21 @@ function MyPageScreen() {
                   {
                     text: '로그아웃',
                     onPress: () => {
-                      null; //TODO:여기에 화면 login으로 가도록 설정(reset으로)
+                      navigation.reset({routes: [{name: 'Login'}]});
+                      setAccount({
+                        id: '',
+                        password: '',
+                        passwordConfirm: '',
+                        name: '',
+                        kakaotalkId: '',
+                        tagList: [],
+                      });
+                      setAccountInfo({
+                        applyRoomCnt: '',
+                        createdRoomCnt: '',
+                        name: '',
+                        point: '',
+                      });
                     },
                     style: 'destructive',
                   },

@@ -41,12 +41,13 @@ function LikeActivityScreen() {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Margin value={50} />
+        <Margin value={20} />
         {renderGridItems()}
+        <Margin value={20} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

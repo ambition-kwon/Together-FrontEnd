@@ -12,12 +12,20 @@ export function DataContextProvider({children}) {
     kakaotalkId: '',
     tagList: [],
   });
+  const [accountInfo, setAccountInfo] = useState({
+    applyRoomCnt: '',
+    createdRoomCnt: '',
+    name: '',
+    point: '',
+  });
   return (
     <DataContext.Provider
       value={{
         account,
         setAccount,
         server,
+        accountInfo,
+        setAccountInfo,
       }}>
       {children}
     </DataContext.Provider>

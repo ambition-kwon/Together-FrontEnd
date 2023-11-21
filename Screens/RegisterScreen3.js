@@ -49,7 +49,7 @@ function RegisterScreen3() {
   }, [toggleList]);
   async function fetchData() {
     try {
-      await axios.post(`${server}/join`, account);
+      const response = await axios.post(`${server}/join`, account);
       console.log('회원가입 성공:', JSON.stringify(account, null, 2));
       setAccount({
         id: '',
@@ -200,7 +200,7 @@ function RegisterScreen3() {
         <NextIcon
           onPress={() => {
             if (account.tagList.length !== 0) {
-              fetchData(); //TODO: 화면이동(reset) 및 account데이터 초기화
+              fetchData();
             }
           }}
         />

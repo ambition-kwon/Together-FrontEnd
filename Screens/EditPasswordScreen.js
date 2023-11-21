@@ -1,15 +1,41 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {View, Text, StyleSheet, Alert} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Margin from '../Components/Margin';
 import CheckIcon from '../Components/CheckIcon';
 import CustomBoxInput from '../Components/CustomBoxInput';
+import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 
 function EditPasswordScreen() {
+  const {account, server} = useContext(DataContext);
+  const navigation = useNavigation();
+  const [password, setPassword] = useState({
+    beforePassword: '',
+    afterPassword: '',
+    afterPasswordConfirm: '',
+  });
+  async function fetchData() {
+    try {
+      const response = await axios.post(
+        `${server}/my/pw`,
+        {
+          changePw: password.afterPassword,
+        },
+        {
+          headers: {
+            memberId: account.id,
+          },
+        },
+      );
+      console.log('비밀번호 변경 완료');
+    } catch (error) {
+      console.error('비밀번호 변경 오류:', error.message);
+    }
+  }
   return (
     <SafeAreaView style={styles.container}>
-      <Margin value={19} />
-      <Margin value={54} />
       <View style={{marginLeft: 33}}>
         <Text style={styles.header}>
           {'사용자의 비밀번호를\n재설정 해 주세요'}
@@ -19,8 +45,10 @@ function EditPasswordScreen() {
       <View style={{alignItems: 'center'}}>
         <CustomBoxInput
           placeholder={'현재 비밀번호'}
-          value={null}
-          onChangeText={null}
+          value={password.beforePassword}
+          onChangeText={text =>
+            setPassword({...password, beforePassword: text})
+          }
           autoComplete={null}
           keyboardType={'default'}
           secureTextEntry={true}
@@ -29,8 +57,8 @@ function EditPasswordScreen() {
         <Margin value={20} />
         <CustomBoxInput
           placeholder={'새 비밀번호'}
-          value={null}
-          onChangeText={null}
+          value={password.afterPassword}
+          onChangeText={text => setPassword({...password, afterPassword: text})}
           autoComplete={null}
           keyboardType={'default'}
           secureTextEntry={true}
@@ -38,15 +66,50 @@ function EditPasswordScreen() {
         <Margin value={20} />
         <CustomBoxInput
           placeholder={'새 비밀번호(재확인)'}
-          value={null}
-          onChangeText={null}
+          value={password.afterPasswordConfirm}
+          onChangeText={text =>
+            setPassword({...password, afterPasswordConfirm: text})
+          }
           autoComplete={null}
           keyboardType={'default'}
           secureTextEntry={true}
         />
       </View>
       <View style={styles.button}>
-        <CheckIcon onPress={null} />
+        <CheckIcon
+          onPress={() => {
+            if (
+              account.password !== password.beforePassword ||
+              password.afterPassword !== password.afterPasswordConfirm
+            ) {
+              Alert.alert(
+                '알림',
+                '비밀번호를 재확인해 주세요',
+                [
+                  {
+                    text: '확인',
+                    style: 'default',
+                  },
+                ],
+                {cancelable: false},
+              );
+            } else {
+              fetchData();
+              navigation.reset({routes: [{name: 'BottomTab'}]});
+              Alert.alert(
+                '알림',
+                '비밀번호 변경이 완료되었습니다.',
+                [
+                  {
+                    text: '확인',
+                    style: 'default',
+                  },
+                ],
+                {cancelable: false},
+              );
+            }
+          }}
+        />
       </View>
     </SafeAreaView>
   );
@@ -55,6 +118,7 @@ function EditPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   header: {
     fontSize: 20,
@@ -70,7 +134,7 @@ const styles = StyleSheet.create({
   button: {
     position: 'absolute',
     right: 15,
-    top: 490,
+    top: 400,
   },
 });
 

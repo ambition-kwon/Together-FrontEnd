@@ -24,14 +24,25 @@ function LoginScreen() {
   const {server, account, setAccount} = useContext(DataContext);
   async function fetchData() {
     try {
-      await axios.post(`${server}/join`, {
+      await axios.post(`${server}/login`, {
         id: account.id,
         password: account.password,
       });
       navigation.reset({routes: [{name: 'BottomTab'}]});
       console.log('로그인 성공:', JSON.stringify(account, null, 2));
     } catch (error) {
-      console.error('오류 발생:', error.message);
+      Alert.alert(
+        '알림',
+        '아이디/비밀번호를 재 확인 해주세요',
+        [
+          {
+            text: '확인',
+            style: 'default',
+            onPress: () => {},
+          },
+        ],
+        {cancelable: true},
+      );
     }
   }
   return (

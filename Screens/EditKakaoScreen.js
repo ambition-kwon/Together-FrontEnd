@@ -1,16 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import IndicatorBar from '../Components/IndicatorBar';
 import Margin from '../Components/Margin';
-import NextIcon from '../Components/NextIcon';
 import CheckIcon from '../Components/CheckIcon';
+import {useNavigation} from '@react-navigation/native';
 
 function EditKakaoScreen() {
+  const [kakaoId, setKakaoId] = useState('');
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
-      <Margin value={19} />
-      <Margin value={54} />
       <View style={{marginLeft: 33}}>
         <Text style={styles.header}>
           {'팀원 연락에 사용될\n카카오톡 ID를 재설정 해 주세요'}
@@ -20,8 +19,8 @@ function EditKakaoScreen() {
       <TextInput
         style={styles.body}
         placeholder={null}
-        value={null}
-        onChangeText={null}
+        value={kakaoId}
+        onChangeText={setKakaoId}
         autoComplete={'off'}
         keyboardType={'default'}
         secureTextEntry={false}
@@ -31,7 +30,13 @@ function EditKakaoScreen() {
         autoFocus={true}
       />
       <View style={styles.button}>
-        <CheckIcon onPress={null} />
+        <CheckIcon
+          onPress={() => {
+            if (kakaoId !== '') {
+              navigation.reset({routes: [{name: 'BottomTab'}]});
+            }
+          }}
+        />
       </View>
     </SafeAreaView>
   );
@@ -40,6 +45,7 @@ function EditKakaoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   header: {
     fontSize: 20,
@@ -55,7 +61,7 @@ const styles = StyleSheet.create({
   button: {
     position: 'absolute',
     right: 15,
-    top: 490,
+    top: 400,
   },
 });
 

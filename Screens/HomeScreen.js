@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -14,13 +14,28 @@ import Margin from '../Components/Margin';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ActivityItem from '../Components/ActivityItem';
 import SearchItem from '../Components/SearchItem';
-import {useFocusEffect} from '@react-navigation/native';
+import axios from 'axios';
+import DataContext from '../Contexts/DataContext';
 
 function HomeScreen() {
   const [searched, setSearched] = useState(false);
-  useFocusEffect(() => {
-    console.log('1번 스크린');
-  });
+  const {server, account} = useContext(DataContext);
+  async function fetchData() {
+    try {
+      const response = await axios.post(`${server}/home`, {
+        headers: {memberId: 'member2'}, //TODO: account.id로 변경하기
+      });
+      console.log(
+        '대외활동 리스트 로드 성공:',
+        JSON.stringify(response.data, null, 2),
+      );
+    } catch (error) {
+      console.error('대외활동 리스트 로드 오류 발생:', error.message);
+    }
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <MainHeader />

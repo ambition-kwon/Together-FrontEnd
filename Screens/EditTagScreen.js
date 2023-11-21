@@ -1,13 +1,15 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import IndicatorBar from '../Components/IndicatorBar';
 import Margin from '../Components/Margin';
-import NextIcon from '../Components/NextIcon';
 import RegisterTag from '../Components/RegisterTag';
 import CheckIcon from '../Components/CheckIcon';
+import DataContext from '../Contexts/DataContext';
+import axios from 'axios';
+import {useNavigation} from '@react-navigation/native';
 
 function EditTagScreen() {
+  const navigation = useNavigation();
   const [toggleList, setToggleList] = useState({
     '기획/아이디어': false,
     '논문/리포트': false,
@@ -28,20 +30,46 @@ function EditTagScreen() {
     기타: false,
   });
   const toggleListKey = Object.keys(toggleList);
+  const {server, account, setAccount} = useContext(DataContext);
   const handleToggle = index => {
     setToggleList(prev => ({
       ...prev,
       [toggleListKey[index]]: !prev[toggleListKey[index]],
     }));
   };
+  useEffect(() => {
+    const trueToggleListKey = Object.keys(toggleList).filter(
+      key => toggleList[key],
+    );
+    setAccount(prevAccount => ({
+      ...prevAccount,
+      tagList: trueToggleListKey,
+    }));
+  }, [toggleList]);
+  async function fetchData() {
+    try {
+      const response = await axios.post(
+        `${server}/my/tags`,
+        {
+          tagList: account.tagList,
+        },
+        {
+          headers: {
+            memberId: account.id,
+          },
+        },
+      );
+      console.log('관심태그 재설정 완료');
+      navigation.reset({routes: [{name: 'BottomTab'}]});
+    } catch (error) {
+      console.error('태그 변경 오류 발생:', error.message);
+    }
+  }
   return (
     <SafeAreaView style={styles.container}>
-      <Margin value={19} />
-      <Margin value={54} />
       <View style={{marginLeft: 33}}>
         <Text style={styles.header}>{'관심있는 분야를\n재설정 해 주세요'}</Text>
       </View>
-      {/*---------------------------------------------*/}
       <View style={styles.main}>
         <View style={styles.button0}>
           <RegisterTag
@@ -163,16 +191,21 @@ function EditTagScreen() {
           />
         </View>
       </View>
-      {/*---------------------------------------------*/}
       <View style={styles.nextButton}>
-        <CheckIcon onPress={null} />
+        <CheckIcon
+          onPress={() => {
+            if (account.tagList.length !== 0) {
+              fetchData();
+            }
+          }}
+        />
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
+  container: {flex: 1, backgroundColor: 'white'},
   main: {position: 'absolute', top: 30},
   header: {fontSize: 20, fontWeight: '700'},
   body: {
@@ -183,23 +216,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   nextButton: {position: 'absolute', right: 15, bottom: 30},
-  button0: {position: 'absolute', top: 214, left: 30},
-  button1: {position: 'absolute', top: 237, left: 241},
-  button2: {position: 'absolute', top: 264, left: 129},
-  button3: {position: 'absolute', top: 318, left: 20},
-  button4: {position: 'absolute', top: 326, left: 207},
-  button5: {position: 'absolute', top: 379, left: 98},
-  button6: {position: 'absolute', top: 389, left: 257},
-  button7: {position: 'absolute', top: 446, left: 30},
-  button8: {position: 'absolute', top: 466, left: 144},
-  button9: {position: 'absolute', top: 473, left: 265},
-  button10: {position: 'absolute', top: 527, left: 20},
-  button11: {position: 'absolute', top: 544, left: 258},
-  button12: {position: 'absolute', top: 561, left: 141},
-  button13: {position: 'absolute', top: 608, left: 48},
-  button14: {position: 'absolute', top: 616, left: 262},
-  button15: {position: 'absolute', top: 643, left: 158},
-  button16: {position: 'absolute', top: 675, left: 21},
+  button0: {position: 'absolute', top: 141, left: 30},
+  button1: {position: 'absolute', top: 164, left: 241},
+  button2: {position: 'absolute', top: 191, left: 129},
+  button3: {position: 'absolute', top: 245, left: 20},
+  button4: {position: 'absolute', top: 253, left: 207},
+  button5: {position: 'absolute', top: 306, left: 98},
+  button6: {position: 'absolute', top: 316, left: 257},
+  button7: {position: 'absolute', top: 373, left: 30},
+  button8: {position: 'absolute', top: 394, left: 144},
+  button9: {position: 'absolute', top: 400, left: 265},
+  button10: {position: 'absolute', top: 454, left: 20},
+  button11: {position: 'absolute', top: 471, left: 258},
+  button12: {position: 'absolute', top: 488, left: 141},
+  button13: {position: 'absolute', top: 535, left: 48},
+  button14: {position: 'absolute', top: 543, left: 262},
+  button15: {position: 'absolute', top: 570, left: 158},
+  button16: {position: 'absolute', top: 602, left: 21},
 });
 
 export default EditTagScreen;
