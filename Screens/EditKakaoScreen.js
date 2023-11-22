@@ -1,13 +1,32 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Margin from '../Components/Margin';
 import CheckIcon from '../Components/CheckIcon';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import DataContext from '../Contexts/DataContext';
 
 function EditKakaoScreen() {
   const [kakaoId, setKakaoId] = useState('');
   const navigation = useNavigation();
+  const {server, account} = useContext(DataContext);
+  async function fetchData() {
+    try {
+      const response = await axios.post(
+        `${server}/my/kakaotalkId`,
+        {kakaotalkId: kakaoId},
+        {
+          headers: {
+            memberId: account.id,
+          },
+        },
+      );
+      console.log('KAKAO ID 변경 성공');
+    } catch (error) {
+      console.error('KAKAO ID 변경 실패:', error.message);
+    }
+  }
   return (
     <SafeAreaView style={styles.container}>
       <View style={{marginLeft: 33}}>
@@ -33,7 +52,9 @@ function EditKakaoScreen() {
         <CheckIcon
           onPress={() => {
             if (kakaoId !== '') {
-              navigation.reset({routes: [{name: 'BottomTab'}]});
+              fetchData().then(() => {
+                navigation.reset({routes: [{name: 'BottomTab'}]});
+              });
             }
           }}
         />

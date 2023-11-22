@@ -1,21 +1,67 @@
-import React from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MainHeader from '../Components/MainHeader';
 import Margin from '../Components/Margin';
 import LinearGradient from 'react-native-linear-gradient';
+import axios from 'axios';
+import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
-function ShowIdScreen() {
+function ShowIdScreen({route}) {
+  const navigation = useNavigation();
+  const {roomId} = route.params;
+  const [data, setData] = useState([]);
+  const img = data.length === 0 ? null : data[data.length - 1].img;
+  const {server} = useContext(DataContext);
+  const renderItem = ({item}) => {
+    if (item.role) {
+      return (
+        <Item
+          role={item.role}
+          kakaotalkId={item.kakaotalkId}
+          name={item.name}
+        />
+      );
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        `${server}/team-member/creator/showJoined`,
+        {
+          headers: {
+            roomId: roomId,
+          },
+        },
+      );
+      setData(response.data);
+      console.log('KAKAO ID 조회 성공');
+    } catch (error) {
+      console.error('KAKAO ID 조회 실패:', error.message);
+    }
+  }
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <MainHeader />
       <Margin value={5} />
       <View style={styles.imageContainer}>
-        <Image
-          source={require('../Images/textImage.png')}
-          style={styles.image}
-        />
-        <TouchableOpacity activeOpacity={0.3} onPress={null}>
+        <Image source={{uri: img}} style={styles.image} />
+        <TouchableOpacity
+          activeOpacity={0.3}
+          onPress={() => {
+            navigation.navigate('ExpandImage', {img: img});
+          }}>
           <Image
             source={require('../Images/expandIcon.png')}
             style={styles.expandIcon}
@@ -26,36 +72,33 @@ function ShowIdScreen() {
             colors={['transparent', 'black']}
             style={styles.linearGradient}>
             <Text style={styles.subjectText} numberOfLines={2}>
-              2023 한화 영보드 5기 모집
+              {'수정요망수정요망수정요망수정요망수정요망수정요망'}
             </Text>
           </LinearGradient>
         </View>
       </View>
       <Margin value={15} />
       <View style={styles.subContainer}>
-        <Item cases={'팀장'} kakao={'joy10231'} nickname={'홍보맨123'} />
-        <Item cases={'팀원'} kakao={'khw12313'} nickname={'울산화이팅'} />
-        <Item cases={'팀원'} kakao={'dksdpdnjs44'} nickname={'재드래곤'} />
-        <Item cases={'팀원'} kakao={'dlwlgus5731'} nickname={'치사량국뽕'} />
+        <FlatList data={data} renderItem={renderItem} />
       </View>
     </SafeAreaView>
   );
 }
 
-function Item({cases, nickname, kakao}) {
+function Item({role, name, kakaotalkId}) {
   return (
     <View style={styles.itemContainer}>
       <Text>
-        {cases === '팀장' ? (
+        {role === '팀장' ? (
           <Text style={styles.text2}>팀장</Text>
-        ) : cases === '팀원' ? (
+        ) : role === '팀원' ? (
           <Text style={styles.text3}>팀원</Text>
         ) : undefined}
-        <Text style={styles.text1}>{` / ${nickname}`}</Text>
+        <Text style={styles.text1}>{` / ${name}`}</Text>
       </Text>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image source={require('../Images/kakao.png')} style={styles.kakao} />
-        <Text style={styles.text1}>{kakao}</Text>
+        <Text style={styles.text1}>{kakaotalkId}</Text>
       </View>
     </View>
   );

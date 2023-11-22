@@ -24,7 +24,7 @@ function LoginScreen() {
   const {server, account, setAccount} = useContext(DataContext);
   async function fetchData() {
     try {
-      await axios.post(`${server}/login`, {
+      const response = await axios.post(`${server}/login`, {
         id: account.id,
         password: account.password,
       });

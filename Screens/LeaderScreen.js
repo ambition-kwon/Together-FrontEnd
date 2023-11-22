@@ -1,24 +1,77 @@
-import React from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MainHeader from '../Components/MainHeader';
 import Margin from '../Components/Margin';
 import LinearGradient from 'react-native-linear-gradient';
+import axios from 'axios';
+import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
-function LeaderScreen() {
+function LeaderScreen({route}) {
+  const navigation = useNavigation();
+  const {roomId} = route.params;
+  const {server} = useContext(DataContext);
+  const [data, setData] = useState([]);
+  const img = data.length === 0 ? null : data[data.length - 1].img;
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        `${server}/team-member/creator/showJoined`,
+        {
+          headers: {
+            roomId: roomId,
+          },
+        },
+      );
+      setData(response.data);
+      console.log('지원자 조회 성공');
+    } catch (error) {
+      console.error('지원자 조회 실패:', error.message);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const renderItem = ({item}) => {
+    if (item.appliedDay) {
+      return (
+        <Item
+          status={item.status}
+          name={item.name}
+          appliedDay={item.appliedDay}
+          onPress={() => {
+            navigation.navigate('ShowAnswer', {
+              memberId: item.memberId,
+              roomId: item.roomId,
+            });
+          }}
+        />
+      );
+    }
+  };
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <MainHeader />
       <Margin value={5} />
       <View style={styles.imageContainer}>
-        <Image
-          source={require('../Images/textImage.png')}
-          style={styles.image}
-        />
+        <Image source={{uri: img}} style={styles.image} />
         <View style={styles.d_day_container}>
-          <Text style={styles.d_day_text}>D-64</Text>
+          <Text style={styles.d_day_text}>{'수정요망'}</Text>
         </View>
-        <TouchableOpacity activeOpacity={0.3} onPress={null}>
+        <TouchableOpacity
+          activeOpacity={0.3}
+          onPress={() => {
+            navigation.navigate('ExpandImage', {img: img});
+          }}>
           <Image
             source={require('../Images/expandIcon.png')}
             style={styles.expandIcon}
@@ -29,31 +82,29 @@ function LeaderScreen() {
             colors={['transparent', 'black']}
             style={styles.linearGradient}>
             <Text style={styles.subjectText} numberOfLines={2}>
-              2023 한화 영보드 5기 모집
+              {'수정요망수정요망수정요망수정요망수정요망'}
             </Text>
           </LinearGradient>
         </View>
       </View>
       <Margin value={15} />
       <View style={styles.subContainer}>
-        <Item cases={'waiting'} />
-        <Item cases={'pass'} />
-        <Item cases={'pass'} />
+        <FlatList data={data} renderItem={renderItem} />
       </View>
     </SafeAreaView>
   );
 }
 
-function Item({cases}) {
+function Item({status, name, appliedDay, onPress}) {
   return (
     <TouchableOpacity
       style={styles.itemContainer}
       activeOpacity={0.3}
-      onPress={null}>
-      <Text style={styles.text1}>지원자5 / 19시간전</Text>
-      {cases === 'waiting' ? (
-        <Text style={styles.text2}>Waiting</Text>
-      ) : cases === 'pass' ? (
+      onPress={onPress}>
+      <Text style={styles.text1}>{`${name} / ${appliedDay}`}</Text>
+      {status === 'WAITING' ? (
+        <Text style={styles.text2}>WAITING</Text>
+      ) : status === 'PASS' ? (
         <Text style={styles.text3}>PASS</Text>
       ) : undefined}
     </TouchableOpacity>

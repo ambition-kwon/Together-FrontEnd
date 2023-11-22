@@ -1,17 +1,73 @@
-import React, {useState} from 'react';
-import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {Text, StyleSheet, View, TouchableOpacity, FlatList} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MainHeader from '../Components/MainHeader';
 import Margin from '../Components/Margin';
 import LeaderItem from '../Components/LeaderItem';
 import MemberItem from '../Components/MemberItem';
-import {useFocusEffect} from '@react-navigation/native';
+import axios from 'axios';
+import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
 function TeamScreen() {
+  const navigation = useNavigation();
+  const {server, account} = useContext(DataContext);
   const [toggle, setToggle] = useState(false);
-  useFocusEffect(() => {
-    console.log('3번 스크린');
-  });
+  const [leaderRoom, setLeaderRoom] = useState([]);
+  const [memberRoom, setMemberRoom] = useState([]);
+  async function fetchData() {
+    try {
+      const response1 = await axios.get(`${server}/team-member/creator`, {
+        headers: {
+          memberId: account.id,
+        },
+      });
+      setLeaderRoom(response1.data);
+      const response2 = await axios.get(`${server}/team-member/member`, {
+        headers: {
+          memberId: account.id,
+        },
+      });
+      setMemberRoom(response2.data);
+      console.log('팀원모집 로딩 성공');
+    } catch (error) {
+      console.error('팀원모집 로딩 실패:', error.message);
+    }
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const leaderRender = ({item}) => {
+    return (
+      <LeaderItem
+        joinedNumber={item.joinedNumber}
+        capacity={item.capacity}
+        content={item.content}
+        title={item.title}
+        deadline={item.deadline}
+        onPress={() => {
+          if (item.capacity === item.joinedNumber) {
+            navigation.navigate('ShowId', {roomId: item.roomId});
+          } else {
+            navigation.navigate('Leader', {roomId: item.roomId});
+          }
+        }}
+      />
+    );
+  };
+  const memberRender = ({item}) => {
+    return (
+      <MemberItem
+        status={item.status}
+        content={item.content}
+        title={item.title}
+        city={item.city}
+        creator={item.creator}
+        createdTime={item.createdTime}
+        onPress={null} //TODO : 여기하기!
+      />
+    );
+  };
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <MainHeader />
@@ -32,19 +88,14 @@ function TeamScreen() {
       </View>
       <Margin value={19} />
       <View style={styles.subContainer}>
+        {/*TODO: 삭제 기능 만들기*/}
         {!toggle ? (
           <>
-            {/*TODO: 삭제 기능 만들기(1)*/}
-            <LeaderItem />
-            <LeaderItem />
-            <LeaderItem />
+            <FlatList data={leaderRoom} renderItem={leaderRender} />
           </>
         ) : (
           <>
-            {/*TODO: 삭제 기능 만들기(2)*/}
-            <MemberItem cases={'waiting'} />
-            <MemberItem cases={'pass'} />
-            <MemberItem cases={'fail'} />
+            <FlatList data={memberRoom} renderItem={memberRender} />
           </>
         )}
       </View>

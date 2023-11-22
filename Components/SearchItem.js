@@ -2,13 +2,15 @@ import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-function SearchItem({value}) {
+function SearchItem({value, onPress}) {
   return (
-    <TouchableOpacity activeOpacity={0.3} onPress={null}>
+    <TouchableOpacity activeOpacity={0.3} onPress={onPress}>
       <View style={styles.container}>
         <Icon name={'search'} color={'black'} size={22} />
         <View style={styles.textContainer}>
-          <Text style={styles.text}>{value}</Text>
+          <Text style={styles.text} numberOfLines={1}>
+            {value.replace(/[\n\r]/g, '')}
+          </Text>
         </View>
         <Icon
           name={'arrow-outward'}

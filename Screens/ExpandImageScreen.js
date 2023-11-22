@@ -3,14 +3,20 @@ import {Image, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {StyleSheet} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
-function ExpandImageScreen() {
+function ExpandImageScreen({route}) {
+  const navigation = useNavigation();
+  const {img} = route.params;
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity activeOpacity={0.3} onPress={null} style={styles.icon}>
+      <TouchableOpacity
+        activeOpacity={0.3}
+        onPress={() => navigation.goBack()}
+        style={styles.icon}>
         <Icon name={'clear'} size={30} color={'white'} />
       </TouchableOpacity>
-      <Image source={require('../Images/textImage.png')} style={styles.image} />
+      <Image source={{uri: img}} style={styles.image} />
     </SafeAreaView>
   );
 }

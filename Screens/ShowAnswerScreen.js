@@ -1,54 +1,165 @@
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Alert,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Margin from '../Components/Margin';
 import ShowAnswerItem from '../Components/ShowAnswerItem';
+import axios from 'axios';
+import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
-function ShowAnswerScreen() {
+function ShowAnswerScreen({route}) {
+  const navigation = useNavigation();
+  const {roomId, memberId} = route.params;
+  const [data, setData] = useState([]);
+  const surveyAnswerId = data.length === 0 ? null : data[0].surveyAnswerId;
+  const {server} = useContext(DataContext);
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        `${server}/team-member/creator/showJoined/surveyAnswer`,
+        {
+          headers: {
+            memberId: memberId,
+            roomId: roomId,
+          },
+        },
+      );
+      setData(response.data);
+      console.log('지원자 설문 조회 성공');
+    } catch (error) {
+      console.error('지원자 설문 조회 실패:', error.message);
+    }
+  }
+  async function failFetch() {
+    try {
+      const response = await axios.post(
+        `${server}/team-member/creator/showJoined/surveyAnswer/fail`,
+        {
+          headers: {
+            surveyAnswerId: surveyAnswerId,
+          },
+        },
+      );
+      console.log('FAIL 부여 성공');
+    } catch (error) {
+      console.error('FAIL 부여 실패:', error.message);
+    }
+  }
+  async function passFetch() {
+    try {
+      const response = await axios.post(
+        `${server}/team-member/creator/showJoined/surveyAnswer/pass`,
+        {
+          headers: {
+            surveyAnswerId: surveyAnswerId,
+          },
+        },
+      );
+      console.log('PASS 부여 성공');
+    } catch (error) {
+      console.error('PASS 부여 실패:', error.message);
+    }
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const renderItem = ({item, index}) => {
+    if (!item.surveyAnswerId) {
+      return (
+        <View>
+          {Object.entries(item).map(([question, answer]) => (
+            <ShowAnswerItem
+              number={index}
+              question={question}
+              answer={answer}
+              key={index}
+            />
+          ))}
+        </View>
+      );
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
-      <Margin value={54} />
       <View style={styles.subContainer}>
-        <ShowAnswerItem
-          number={1}
-          question={'귀하의 성함은 어떻게 되시나요?'}
-          answer={'권혁원'}
-        />
-        <ShowAnswerItem
-          number={2}
-          question={'정확한 거주지를 입력해주세요!'}
-          answer={'고양시 일산동구'}
-        />
-        <ShowAnswerItem
-          number={3}
-          question={'대학교는 어디 / 무슨학과에 재학중이신가요?'}
-          answer={'제주대학교 / 컴퓨터공학전공'}
-        />
+        <FlatList data={data} renderItem={renderItem} />
       </View>
       <View style={styles.iconContainer}>
-        <FailIcon />
-        <PassIcon />
+        <FailIcon
+          onPress={() => {
+            Alert.alert(
+              '알림',
+              '본 지원자를 불합격처리 하시겠습니까?',
+              [
+                {
+                  text: '취소',
+                  style: 'cancel',
+                },
+                {
+                  text: '불합격',
+                  onPress: () => {
+                    failFetch().then(() => {
+                      navigation.reset({routes: [{name: 'BottomTab'}]});
+                    });
+                  },
+                  style: 'destructive',
+                },
+              ],
+              {cancelable: false},
+            );
+          }}
+        />
+        <PassIcon
+          onPress={() => {
+            Alert.alert(
+              '알림',
+              '본 지원자를 합격처리 하시겠습니까?',
+              [
+                {
+                  text: '취소',
+                  style: 'cancel',
+                },
+                {
+                  text: '합격',
+                  onPress: () => {
+                    passFetch().then(() => {
+                      navigation.reset({routes: [{name: 'BottomTab'}]});
+                    });
+                  },
+                  style: 'destructive',
+                },
+              ],
+              {cancelable: false},
+            );
+          }}
+        />
       </View>
     </SafeAreaView>
   );
 }
 
-function FailIcon() {
+function FailIcon({onPress}) {
   return (
     <TouchableOpacity
       activeOpacity={0.3}
-      onPress={null}
+      onPress={onPress}
       style={styles.failIcon}>
       <Text style={styles.iconText}>FAIL</Text>
     </TouchableOpacity>
   );
 }
 
-function PassIcon() {
+function PassIcon({onPress}) {
   return (
     <TouchableOpacity
       activeOpacity={0.3}
-      onPress={null}
+      onPress={onPress}
       style={styles.passIcon}>
       <Text style={styles.iconText}>PASS</Text>
     </TouchableOpacity>

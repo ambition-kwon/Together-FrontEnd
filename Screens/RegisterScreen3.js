@@ -61,7 +61,7 @@ function RegisterScreen3() {
       });
       navigation.reset({routes: [{name: 'Register4'}]});
     } catch (error) {
-      console.error('오류 발생:', error.message);
+      console.log('네트워크 에러 or 아이디 중복');
     }
   }
 

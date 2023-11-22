@@ -1,10 +1,16 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Margin from '../Components/Margin';
 import NextIcon from '../Components/NextIcon';
+import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
 function CreateRoomScreen3() {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const {setMakeRoom, makeRoom} = useContext(DataContext);
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <Margin value={54} />
@@ -15,8 +21,8 @@ function CreateRoomScreen3() {
       <TextInput
         style={styles.body1}
         placeholder={'방 제목'}
-        value={null}
-        onChangeText={null}
+        value={title}
+        onChangeText={setTitle}
         autoComplete={'off'}
         keyboardType={'default'}
         secureTextEntry={false}
@@ -31,18 +37,24 @@ function CreateRoomScreen3() {
       <TextInput
         style={styles.body2}
         placeholder={'방 내용'}
-        value={null}
-        onChangeText={null}
+        value={content}
+        onChangeText={setContent}
         autoComplete={'off'}
         keyboardType={'default'}
         secureTextEntry={false}
         autoCapitalize={'none'}
         autoCorrect={false}
         passwordRules={null}
-        autoFocus={true}
+        autoFocus={false}
+        multiline={true}
       />
       <View style={styles.button}>
-        <NextIcon onPress={null} />
+        <NextIcon
+          onPress={() => {
+            setMakeRoom({...makeRoom, title: title, content: content});
+            navigation.navigate('CreateRoom4');
+          }}
+        />
       </View>
     </SafeAreaView>
   );

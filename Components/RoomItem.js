@@ -2,16 +2,24 @@ import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-function RoomItem() {
+function RoomItem({
+  joinedNumber,
+  creator,
+  createdDay,
+  title,
+  content,
+  capacity,
+  city,
+  onPress,
+}) {
   return (
     <TouchableOpacity
       activeOpacity={0.3}
-      onPress={null}
+      onPress={onPress}
       style={styles.container}>
-      <Text style={styles.text1}>제주시 거주하시는 팀원 구합니다.</Text>
+      <Text style={styles.text1}>{title}</Text>
       <Text style={styles.text2} numberOfLines={4}>
-        저는 언론홍보학과이고, 제주시에서 거주하시는 대학생 팀원 구해봅니다.
-        실력은 상관없고 하려는 의지만 있다면 OK입니다~~ 부담없이 지원해주세요!!
+        {content}
       </Text>
       <View
         style={{
@@ -20,11 +28,12 @@ function RoomItem() {
           justifyContent: 'space-between',
         }}>
         <View>
-          <Text style={styles.text3}>홍보맨123 / 제주시 / 13시간전</Text>
+          <Text
+            style={styles.text3}>{`${creator} / ${city} / ${createdDay}`}</Text>
         </View>
         <View style={{flexDirection: 'row'}}>
           <Icon name={'groups'} size={12} color={'black'} />
-          <Text style={styles.text4}>3/3명</Text>
+          <Text style={styles.text4}>{`${joinedNumber} / ${capacity}명`}</Text>
         </View>
       </View>
     </TouchableOpacity>

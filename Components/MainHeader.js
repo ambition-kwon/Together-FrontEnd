@@ -1,22 +1,36 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useNavigation} from '@react-navigation/native';
 
 function MainHeader() {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <TouchableOpacity activeOpacity={0.3} onPress={null}>
+      <TouchableOpacity
+        activeOpacity={0.3}
+        onPress={() => {
+          navigation.reset({routes: [{name: 'BottomTab'}]});
+        }}>
         <Text style={styles.text}>Together</Text>
       </TouchableOpacity>
       <View style={styles.subContainer1}>
         <TouchableOpacity
           activeOpacity={0.3}
-          onPress={null}
+          onPress={() => {
+            navigation.reset({routes: [{name: 'BottomTab'}]});
+            navigation.navigate('MyPage');
+          }}
           style={styles.circle}>
           <Icon name={'person'} color={'black'} size={20} />
         </TouchableOpacity>
         <View style={{width: 10}} />
-        <TouchableOpacity activeOpacity={0.3} onPress={null}>
+        <TouchableOpacity
+          activeOpacity={0.3}
+          onPress={() => {
+            navigation.reset({routes: [{name: 'BottomTab'}]});
+            navigation.navigate('Team');
+          }}>
           <Icon name={'notifications-none'} color={'black'} size={30} />
         </TouchableOpacity>
       </View>

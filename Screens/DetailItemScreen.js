@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MainHeader from '../Components/MainHeader';
@@ -17,15 +18,17 @@ import RoomItem from '../Components/RoomItem';
 import PlusIcon from '../Components/PlusIcon';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
 function DetailItemScreen({route}) {
-  const {server} = useContext(DataContext);
+  const navigation = useNavigation();
+  const {server, account} = useContext(DataContext);
   const {itemId} = route.params;
   const [toggle, setToggle] = useState(true);
   const [toggleIcon, setToggleIcon] = useState(false);
   const [data, setData] = useState({
     sponsor: '',
-    img: '',
+    img: null,
     Dday: '',
     tag: [],
     title: '',
@@ -34,6 +37,7 @@ function DetailItemScreen({route}) {
     views: '',
     homepage: '',
   });
+  const [roomList, setRoomList] = useState('');
   async function fetchData() {
     try {
       const response = await axios.get(`${server}/home/item`, {
@@ -44,7 +48,43 @@ function DetailItemScreen({route}) {
     } catch (error) {
       console.error('대외활동 세부정보 로드 실패:', error.message);
     }
+    try {
+      const response = await axios.get(`${server}/home/item/room`, {
+        headers: {itemId: itemId},
+      });
+      setRoomList(response.data);
+      console.log('룸 리스트 로드 성공');
+    } catch (error) {
+      console.error('룸 리스트 로드 실패:', error.message);
+    }
   }
+  async function pickItem() {
+    try {
+      const response = await axios.post(`${server}/home/item/pick`, {
+        headers: {memberId: account.memberId, pick: 'true', itemId: itemId},
+      });
+      console.log('찜 성공');
+    } catch (error) {
+      console.error('찜 실패:', error.message);
+    }
+  }
+  const renderItem1 = ({item}) => {
+    return <TagItem value={item} />;
+  };
+  const renderItem2 = ({item}) => {
+    return (
+      <RoomItem
+        joinedNumber={item.joinedNumber}
+        creator={item.creator}
+        createdDay={item.createdDay}
+        content={item.content}
+        city={item.city}
+        capacity={item.capacity}
+        title={item.title}
+        onPress={() => navigation.navigate('Answer', {roomId: item.roomId})}
+      />
+    );
+  };
   useEffect(() => {
     fetchData();
   }, []);
@@ -53,14 +93,15 @@ function DetailItemScreen({route}) {
       <MainHeader />
       <Margin value={5} />
       <View style={styles.imageContainer}>
-        <Image
-          source={require('../Images/textImage.png')}
-          style={styles.image}
-        />
+        <Image source={{uri: data.img}} style={styles.image} />
         <View style={styles.d_day_container}>
           <Text style={styles.d_day_text}>{data.Dday}</Text>
         </View>
-        <TouchableOpacity activeOpacity={0.3} onPress={null}>
+        <TouchableOpacity
+          activeOpacity={0.3}
+          onPress={() => {
+            navigation.navigate('ExpandImage', {img: data.img});
+          }}>
           <Image
             source={require('../Images/expandIcon.png')}
             style={styles.expandIcon}
@@ -77,7 +118,10 @@ function DetailItemScreen({route}) {
         </View>
         <TouchableOpacity
           activeOpacity={0.3}
-          onPress={() => setToggleIcon(prev => !prev)}>
+          onPress={() => {
+            setToggleIcon(prev => !prev);
+            pickItem();
+          }}>
           <Icon
             name={toggleIcon ? 'heart' : 'heart-outline'}
             size={30}
@@ -112,19 +156,16 @@ function DetailItemScreen({route}) {
         <>
           <Margin value={5} />
           <View style={styles.tagContainer}>
-            <ScrollView
+            <FlatList
+              data={data.tag}
+              renderItem={renderItem1}
               horizontal={true}
-              showsHorizontalScrollIndicator={false}>
-              <TagItem value={'기획/아이디어'} />
-              <TagItem value={'네이밍/슬로건'} />
-              <TagItem value={'대외활동/서포터즈'} />
-              <TagItem value={'예체능/미술/음악'} />
-            </ScrollView>
+            />
           </View>
           <Margin value={5} />
           <View style={{flexDirection: 'row', marginLeft: 12}}>
             <Text style={styles.text1}>모집기간 : </Text>
-            <Text style={styles.text2}>{`~${data.deadline}`}</Text>
+            <Text style={styles.text2}>{`~ ${data.deadline}`}</Text>
           </View>
           <Margin value={5} />
           <Text style={[styles.text1, {marginLeft: 12}]}>상세설명</Text>
@@ -146,16 +187,17 @@ function DetailItemScreen({route}) {
       {!toggle && (
         <>
           <View style={styles.roomContainer}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <RoomItem />
-              <RoomItem />
-              <RoomItem />
-              <RoomItem />
-              <RoomItem />
-              <RoomItem />
-            </ScrollView>
+            <FlatList
+              data={roomList}
+              renderItem={renderItem2}
+              style={{width: '100%'}}
+            />
             <View style={styles.icon}>
-              <PlusIcon onPress={null} />
+              <PlusIcon
+                onPress={() =>
+                  navigation.navigate('CreateRoom1', {itemId: itemId})
+                }
+              />
             </View>
           </View>
         </>

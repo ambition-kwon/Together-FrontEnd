@@ -1,10 +1,15 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Margin from '../Components/Margin';
 import NextIcon from '../Components/NextIcon';
+import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
 function CreateRoomScreen2() {
+  const navigation = useNavigation();
+  const [city, setCity] = useState('');
+  const {setMakeRoom, makeRoom} = useContext(DataContext);
   return (
     <SafeAreaView style={styles.container}>
       <Margin value={54} />
@@ -15,8 +20,8 @@ function CreateRoomScreen2() {
       <TextInput
         style={styles.body}
         placeholder={null}
-        value={null}
-        onChangeText={null}
+        value={city}
+        onChangeText={setCity}
         autoComplete={'off'}
         keyboardType={'default'}
         secureTextEntry={false}
@@ -26,7 +31,12 @@ function CreateRoomScreen2() {
         autoFocus={true}
       />
       <View style={styles.button}>
-        <NextIcon onPress={null} />
+        <NextIcon
+          onPress={() => {
+            setMakeRoom({...makeRoom, city: city});
+            navigation.navigate('CreateRoom3');
+          }}
+        />
       </View>
     </SafeAreaView>
   );

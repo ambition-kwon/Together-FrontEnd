@@ -1,16 +1,26 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-function MemberItem({cases}) {
+function MemberItem({
+  creator,
+  city,
+  createdTime,
+  title,
+  content,
+  roomId,
+  status,
+  onPress,
+}) {
   return (
     <TouchableOpacity
       activeOpacity={0.3}
-      onPress={null}
+      onPress={onPress}
       style={styles.container}>
-      <Text style={styles.text1}>제주시 거주하시는 팀원 구합니다.</Text>
+      <Text style={styles.text1} numberOfLines={1}>
+        {title}
+      </Text>
       <Text style={styles.text2} numberOfLines={4}>
-        저는 언론홍보학과이고, 제주시에서 거주하시는 대학생 팀원 구해봅니다.
-        실력은 상관없고 하려는 의지만 있다면 OK입니다~~ 부담없이 지원해주세요!!
+        {content}
       </Text>
       <View
         style={{
@@ -19,13 +29,16 @@ function MemberItem({cases}) {
           justifyContent: 'space-between',
         }}>
         <View>
-          <Text style={styles.text3}>홍보맨123 / 제주시 / 13시간전</Text>
+          <Text
+            style={
+              styles.text3
+            }>{`${creator} / ${city} / ${createdTime}`}</Text>
         </View>
-        {cases === 'waiting' ? (
+        {status === 'WAITING' ? (
           <Text style={styles.waiting}>Waiting</Text>
-        ) : cases === 'pass' ? (
+        ) : status === 'PASS' ? (
           <Text style={styles.pass}>PASS</Text>
-        ) : cases === 'fail' ? (
+        ) : status === 'FAIL' ? (
           <Text style={styles.fail}>FAIL</Text>
         ) : undefined}
       </View>

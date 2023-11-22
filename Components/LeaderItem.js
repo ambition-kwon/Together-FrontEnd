@@ -3,17 +3,24 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Margin from './Margin';
 
-function LeaderItem() {
+function LeaderItem({
+  joinedNumber,
+  title,
+  deadline,
+  content,
+  capacity,
+  onPress,
+}) {
   return (
     <TouchableOpacity
       activeOpacity={0.3}
-      onPress={null}
+      onPress={onPress}
       style={styles.container}>
-      <Text style={styles.text1}>
-        2022 고용노동부 일생활균형 홍보 포스터 공모전
+      <Text style={styles.text1} numberOfLines={1}>
+        {title}
       </Text>
       <Text style={styles.text2} numberOfLines={3}>
-        제주시 거주하시는 팀원 우선적으로 구합니다.
+        {content}
       </Text>
       <View
         style={{
@@ -22,11 +29,11 @@ function LeaderItem() {
           justifyContent: 'space-between',
         }}>
         <View style={styles.d_day_container}>
-          <Text style={styles.d_day_text}>D-23</Text>
+          <Text style={styles.d_day_text}>{deadline}</Text>
         </View>
         <View style={{flexDirection: 'row'}}>
           <Icon name={'groups'} size={12} color={'black'} />
-          <Text style={styles.text4}>3/3명</Text>
+          <Text style={styles.text4}>{`${joinedNumber} / ${capacity}명`}</Text>
         </View>
       </View>
     </TouchableOpacity>

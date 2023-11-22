@@ -11,6 +11,15 @@ import EditKakaoScreen from './EditKakaoScreen';
 import EditTagScreen from './EditTagScreen';
 import LikeActivityScreen from './LikeActivityScreen';
 import {DetailItemScreen} from './DetailItemScreen';
+import ExpandImageScreen from './ExpandImageScreen';
+import CreateRoomScreen1 from './CreateRoomScreen1';
+import CreateRoomScreen2 from './CreateRoomScreen2';
+import CreateRoomScreen3 from './CreateRoomScreen3';
+import CreateRoomScreen4 from './CreateRoomScreen4';
+import AnswerScreen from './AnswerScreen';
+import {ShowIdScreen} from './ShowIdScreen';
+import {LeaderScreen} from './LeaderScreen';
+import ShowAnswerScreen from './ShowAnswerScreen';
 
 function RootStack() {
   const stack = createNativeStackNavigator();
@@ -95,6 +104,69 @@ function RootStack() {
         component={DetailItemScreen}
         options={{
           headerShown: false,
+        }}
+      />
+      <stack.Screen
+        name={'ExpandImage'}
+        component={ExpandImageScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <stack.Screen
+        name={'CreateRoom1'}
+        component={CreateRoomScreen1}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <stack.Screen
+        name={'CreateRoom2'}
+        component={CreateRoomScreen2}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <stack.Screen
+        name={'CreateRoom3'}
+        component={CreateRoomScreen3}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <stack.Screen
+        name={'CreateRoom4'}
+        component={CreateRoomScreen4}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <stack.Screen
+        name={'Answer'}
+        component={AnswerScreen}
+        options={{
+          headerTitle: '설문 답변',
+        }}
+      />
+      <stack.Screen
+        name={'ShowId'}
+        component={ShowIdScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <stack.Screen
+        name={'Leader'}
+        component={LeaderScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <stack.Screen
+        name={'ShowAnswer'}
+        component={ShowAnswerScreen}
+        options={{
+          headerTitle: '지원자 설문 조회',
         }}
       />
     </stack.Navigator>

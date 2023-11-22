@@ -17,9 +17,13 @@ function ActivityItem({
       style={[styles.container, {backgroundColor: color}]}
       activeOpacity={0.5}
       onPress={onPress}>
-      <Image source={require('../Images/textImage.png')} style={styles.image} />
-      <Text style={styles.text1}>{text1}</Text>
-      <Text style={styles.text2}>{text2}</Text>
+      <Image source={{uri: uri}} style={styles.image} />
+      <Text style={styles.text1} numberOfLines={2}>
+        {text1}
+      </Text>
+      <Text style={styles.text2} numberOfLines={1}>
+        {text2}
+      </Text>
       <Text style={styles.text3}>{text3}</Text>
       <Icon name={'search'} size={11.5} color={'black'} style={styles.icon1} />
       <Text style={styles.text4}>{text4}</Text>
@@ -52,6 +56,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 18,
     top: 186,
+    width: 140,
   },
   text3: {
     fontSize: 9,

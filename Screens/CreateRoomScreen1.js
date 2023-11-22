@@ -1,11 +1,16 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Margin from '../Components/Margin';
 import NextIcon from '../Components/NextIcon';
+import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
-function CreateRoomScreen1() {
+function CreateRoomScreen1({route}) {
+  const {itemId} = route.params;
   const [headCount, setHeadCount] = useState('');
+  const {setMakeRoom, makeRoom, account} = useContext(DataContext);
+  const navigation = useNavigation(DataContext);
   const handleHeadCount = text => {
     if (/^0/.test(text)) {
       return;
@@ -25,7 +30,6 @@ function CreateRoomScreen1() {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        {/*TODO: 이거 String형이니까 보낼 때 number형으로 변환 후 보내기*/}
         <TextInput
           style={styles.body}
           placeholder={null}
@@ -42,7 +46,17 @@ function CreateRoomScreen1() {
         <Text style={styles.body}>명</Text>
       </View>
       <View style={styles.button}>
-        <NextIcon onPress={null} />
+        <NextIcon
+          onPress={() => {
+            setMakeRoom({
+              ...makeRoom,
+              capacity: headCount.toString(),
+              memberId: account.id,
+              itemId: itemId.toString(),
+            });
+            navigation.navigate('CreateRoom2');
+          }}
+        />
       </View>
     </SafeAreaView>
   );

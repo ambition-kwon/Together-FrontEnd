@@ -18,6 +18,15 @@ export function DataContextProvider({children}) {
     name: '',
     point: '',
   });
+  const [makeRoom, setMakeRoom] = useState({
+    title: '',
+    content: '',
+    city: '',
+    capacity: null,
+    memberId: '',
+    itemId: null,
+  });
+  const [makeQuestion, setMakeQuestion] = useState({});
   return (
     <DataContext.Provider
       value={{
@@ -26,6 +35,10 @@ export function DataContextProvider({children}) {
         server,
         accountInfo,
         setAccountInfo,
+        makeRoom,
+        setMakeRoom,
+        makeQuestion,
+        setMakeQuestion,
       }}>
       {children}
     </DataContext.Provider>
