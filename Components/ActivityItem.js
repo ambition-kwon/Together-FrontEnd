@@ -1,19 +1,31 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-function ActivityItem({uri, text1, text2, text3, text4, text5, color}) {
+function ActivityItem({
+  uri,
+  text1,
+  text2,
+  text3,
+  text4,
+  text5,
+  color,
+  onPress,
+}) {
   return (
-    <View style={[styles.container, {backgroundColor: color}]}>
+    <TouchableOpacity
+      style={[styles.container, {backgroundColor: color}]}
+      activeOpacity={0.5}
+      onPress={onPress}>
       <Image source={require('../Images/textImage.png')} style={styles.image} />
       <Text style={styles.text1}>{text1}</Text>
       <Text style={styles.text2}>{text2}</Text>
-      <Text style={styles.text3}>{`D-${text3}`}</Text>
+      <Text style={styles.text3}>{text3}</Text>
       <Icon name={'search'} size={11.5} color={'black'} style={styles.icon1} />
       <Text style={styles.text4}>{text4}</Text>
       <Icon name={'groups'} size={11.5} color={'black'} style={styles.icon2} />
       <Text style={styles.text5}>{text5}</Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 

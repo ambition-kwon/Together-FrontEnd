@@ -7,7 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 function LeaderScreen() {
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <MainHeader />
       <Margin value={5} />
       <View style={styles.imageContainer}>

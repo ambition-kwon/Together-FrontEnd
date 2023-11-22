@@ -16,26 +16,44 @@ import ActivityItem from '../Components/ActivityItem';
 import SearchItem from '../Components/SearchItem';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
+import {useNavigation} from '@react-navigation/native';
 
 function HomeScreen() {
+  const navigation = useNavigation();
   const [searched, setSearched] = useState(false);
   const {server, account} = useContext(DataContext);
   async function fetchData() {
     try {
       const response = await axios.post(`${server}/home`, {
-        headers: {memberId: 'member2'}, //TODO: account.id로 변경하기
+        headers: {memberId: account.id},
       });
       console.log(
         '대외활동 리스트 로드 성공:',
         JSON.stringify(response.data, null, 2),
       );
     } catch (error) {
-      console.error('대외활동 리스트 로드 오류 발생:', error.message);
+      console.error('대외활동 리스트 로드 실패:', error.message);
     }
   }
   useEffect(() => {
     fetchData();
   }, []);
+  const renderItem = ({item}) => {
+    return (
+      <ActivityItem
+        text1={item.title}
+        text2={item.sponsor}
+        text3={item.Dday}
+        text4={item.views}
+        text5={null} //TODO: 열린 방 개수 어딨어...?
+        color={'rgba(255, 241, 228, 1)'}
+        uri={item.img}
+        onPress={() => {
+          navigation.navigate('DetailItem', {itemId: item.itemId});
+        }}
+      />
+    );
+  };
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <MainHeader />
@@ -102,6 +120,7 @@ function HomeScreen() {
               style={styles.scrollHorizontal}
               horizontal={true}
               showsHorizontalScrollIndicator={false}>
+              {/*<FlatList data={null} renderItem={renderItem} style={null} />*/}
               <ActivityItem
                 text1={'2022 고용노동부 일생활균형 호보포스...'}
                 text2={'고용노동부'}

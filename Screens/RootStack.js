@@ -10,6 +10,7 @@ import EditPasswordScreen from './EditPasswordScreen';
 import EditKakaoScreen from './EditKakaoScreen';
 import EditTagScreen from './EditTagScreen';
 import LikeActivityScreen from './LikeActivityScreen';
+import {DetailItemScreen} from './DetailItemScreen';
 
 function RootStack() {
   const stack = createNativeStackNavigator();
@@ -87,6 +88,13 @@ function RootStack() {
         component={LikeActivityScreen}
         options={{
           headerTitle: '관심있는 활동',
+        }}
+      />
+      <stack.Screen
+        name={'DetailItem'}
+        component={DetailItemScreen}
+        options={{
+          headerShown: false,
         }}
       />
     </stack.Navigator>

@@ -37,6 +37,7 @@ function AnswerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   subContainer: {flex: 1, marginHorizontal: 13},
   header: {
