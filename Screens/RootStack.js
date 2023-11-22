@@ -20,6 +20,7 @@ import AnswerScreen from './AnswerScreen';
 import {ShowIdScreen} from './ShowIdScreen';
 import {LeaderScreen} from './LeaderScreen';
 import ShowAnswerScreen from './ShowAnswerScreen';
+import NoticeScreen from './NoticeScreen';
 
 function RootStack() {
   const stack = createNativeStackNavigator();
@@ -167,6 +168,13 @@ function RootStack() {
         component={ShowAnswerScreen}
         options={{
           headerTitle: '지원자 설문 조회',
+        }}
+      />
+      <stack.Screen
+        name={'Notice'}
+        component={NoticeScreen}
+        options={{
+          headerTitle: '오픈소스 라이선스',
         }}
       />
     </stack.Navigator>
