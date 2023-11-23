@@ -8,14 +8,17 @@ import MemberItem from '../Components/MemberItem';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
 import {useNavigation} from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 function TeamScreen() {
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const {server, account} = useContext(DataContext);
   const [toggle, setToggle] = useState(false);
   const [leaderRoom, setLeaderRoom] = useState([]);
   const [memberRoom, setMemberRoom] = useState([]);
   async function fetchData() {
+    setLoading(true);
     try {
       const response1 = await axios.get(`${server}/team-member/creator`, {
         headers: {
@@ -30,8 +33,10 @@ function TeamScreen() {
       });
       setMemberRoom(response2.data);
       console.log('팀원모집 로딩 성공');
+      setLoading(false);
     } catch (error) {
       console.error('팀원모집 로딩 실패:', error.message);
+      setLoading(false);
     }
   }
   useEffect(() => {
@@ -99,6 +104,7 @@ function TeamScreen() {
           </>
         )}
       </View>
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

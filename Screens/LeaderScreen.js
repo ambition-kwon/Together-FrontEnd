@@ -14,14 +14,17 @@ import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
 import {useNavigation} from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 function LeaderScreen({route}) {
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const {roomId} = route.params;
   const {server} = useContext(DataContext);
   const [data, setData] = useState([]);
   const img = data.length === 0 ? null : data[data.length - 1].img;
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.get(
         `${server}/team-member/creator/showJoined`,
@@ -33,8 +36,10 @@ function LeaderScreen({route}) {
       );
       setData(response.data);
       console.log('지원자 조회 성공');
+      setLoading(false);
     } catch (error) {
       console.error('지원자 조회 실패:', error.message);
+      setLoading(false);
     }
   }
 
@@ -91,6 +96,7 @@ function LeaderScreen({route}) {
       <View style={styles.subContainer}>
         <FlatList data={data} renderItem={renderItem} />
       </View>
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

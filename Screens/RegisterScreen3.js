@@ -8,8 +8,10 @@ import RegisterTag from '../Components/RegisterTag';
 import {useNavigation} from '@react-navigation/native';
 import DataContext from '../Contexts/DataContext';
 import axios from 'axios';
+import LoadingScreen from './LoadingScreen';
 
 function RegisterScreen3() {
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const {server, account, setAccount} = useContext(DataContext);
   const [toggleList, setToggleList] = useState({
@@ -48,9 +50,11 @@ function RegisterScreen3() {
     }));
   }, [toggleList]);
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.post(`${server}/join`, account);
       console.log('회원가입 성공:', JSON.stringify(account, null, 2));
+      setLoading(false);
       setAccount({
         id: '',
         password: '',
@@ -62,6 +66,7 @@ function RegisterScreen3() {
       navigation.reset({routes: [{name: 'Register4'}]});
     } catch (error) {
       console.log('네트워크 에러 or 아이디 중복');
+      setLoading(false);
     }
   }
 
@@ -205,6 +210,7 @@ function RegisterScreen3() {
           }}
         />
       </View>
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

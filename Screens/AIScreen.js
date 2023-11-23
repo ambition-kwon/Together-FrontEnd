@@ -16,13 +16,16 @@ import AiIcon from '../Components/AiIcon';
 import DataContext from '../Contexts/DataContext';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 function AIScreen() {
   const navigation = useNavigation();
   const [toggle, setToggle] = useState(false);
   const {server, account} = useContext(DataContext);
   const [data, setData] = useState({});
+  const [loading, setLoading] = useState(false);
   async function receiveFetch() {
+    setLoading(true);
     try {
       const response = await axios.get(`${server}/ai`, {
         headers: {
@@ -31,11 +34,14 @@ function AIScreen() {
       });
       setData(response.data);
       console.log('AI 추천 리스트 로드 성공');
+      setLoading(false);
     } catch (error) {
       console.error('AI 추천 리스트 로드 실패:', error.message);
+      setLoading(false);
     }
   }
   async function sendFetch(interest) {
+    setLoading(true);
     try {
       const response = await axios.post(`${server}/ai/interest`, {
         headers: {
@@ -46,8 +52,10 @@ function AIScreen() {
       });
       receiveFetch();
       console.log('관심도 평가 성공');
+      setLoading(false);
     } catch (error) {
       console.error('관심도 평가 실패:', error.message);
+      setLoading(false);
     }
   }
 
@@ -161,6 +169,7 @@ function AIScreen() {
           }}
         />
       </View>
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

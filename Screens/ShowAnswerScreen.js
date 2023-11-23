@@ -12,14 +12,17 @@ import ShowAnswerItem from '../Components/ShowAnswerItem';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
 import {useNavigation} from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 function ShowAnswerScreen({route}) {
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const {roomId, memberId} = route.params;
   const [data, setData] = useState([]);
   const surveyAnswerId = data.length === 0 ? null : data[0].surveyAnswerId;
   const {server} = useContext(DataContext);
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.get(
         `${server}/team-member/creator/showJoined/surveyAnswer`,
@@ -32,11 +35,14 @@ function ShowAnswerScreen({route}) {
       );
       setData(response.data);
       console.log('지원자 설문 조회 성공');
+      setLoading(false);
     } catch (error) {
       console.error('지원자 설문 조회 실패:', error.message);
+      setLoading(false);
     }
   }
   async function failFetch() {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${server}/team-member/creator/showJoined/surveyAnswer/fail`,
@@ -47,11 +53,14 @@ function ShowAnswerScreen({route}) {
         },
       );
       console.log('FAIL 부여 성공');
+      setLoading(false);
     } catch (error) {
       console.error('FAIL 부여 실패:', error.message);
+      setLoading(false);
     }
   }
   async function passFetch() {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${server}/team-member/creator/showJoined/surveyAnswer/pass`,
@@ -62,8 +71,10 @@ function ShowAnswerScreen({route}) {
         },
       );
       console.log('PASS 부여 성공');
+      setLoading(false);
     } catch (error) {
       console.error('PASS 부여 실패:', error.message);
+      setLoading(false);
     }
   }
   useEffect(() => {
@@ -140,6 +151,7 @@ function ShowAnswerScreen({route}) {
           }}
         />
       </View>
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

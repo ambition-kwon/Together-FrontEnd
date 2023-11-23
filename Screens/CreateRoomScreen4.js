@@ -18,8 +18,10 @@ import CheckIcon from '../Components/CheckIcon';
 import DataContext from '../Contexts/DataContext';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
+import LoadingScreen from './LoadingScreen';
 
 function CreateRoomScreen4() {
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const {server, makeRoom, account} = useContext(DataContext);
   const [question, setQuestion] = useState([]);
@@ -31,6 +33,7 @@ function CreateRoomScreen4() {
     return acc;
   }, {});
   async function fetchData() {
+    setLoading(true);
     try {
       const send = {
         Question: resultObject,
@@ -40,18 +43,10 @@ function CreateRoomScreen4() {
         headers: {memberId: account.id},
       });
       console.log('방 만들기 성공:');
+      setLoading(false);
     } catch (error) {
       console.error('방 만들기 실패:', error.message);
-      console.log(
-        JSON.stringify(
-          {
-            Question: resultObject,
-            Room: makeRoom,
-          },
-          null,
-          2,
-        ),
-      );
+      setLoading(false);
     }
   }
   const renderItem = ({item, index}) => {
@@ -140,6 +135,7 @@ function CreateRoomScreen4() {
             />
           </View>
         </KeyboardAvoidingView>
+        {loading ? <LoadingScreen /> : null}
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

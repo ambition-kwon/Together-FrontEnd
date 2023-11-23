@@ -1,14 +1,15 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Margin from '../Components/Margin';
 import RegisterTag from '../Components/RegisterTag';
 import CheckIcon from '../Components/CheckIcon';
 import DataContext from '../Contexts/DataContext';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 function EditTagScreen() {
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const [toggleList, setToggleList] = useState({
     '기획/아이디어': false,
@@ -47,6 +48,7 @@ function EditTagScreen() {
     }));
   }, [toggleList]);
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${server}/my/tags`,
@@ -60,9 +62,11 @@ function EditTagScreen() {
         },
       );
       console.log('관심태그 재설정 완료');
+      setLoading(false);
       navigation.reset({routes: [{name: 'BottomTab'}]});
     } catch (error) {
       console.error('태그 변경 오류 발생:', error.message);
+      setLoading(false);
     }
   }
   return (
@@ -200,6 +204,7 @@ function EditTagScreen() {
           }}
         />
       </View>
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

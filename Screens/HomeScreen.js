@@ -18,8 +18,10 @@ import SearchItem from '../Components/SearchItem';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
 import {useNavigation} from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 function HomeScreen() {
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const [searched, setSearched] = useState(false);
   const [query, setQuery] = useState('');
@@ -27,14 +29,17 @@ function HomeScreen() {
   const {server, account} = useContext(DataContext);
   const [data, setData] = useState('');
   async function fetchHomeData() {
+    setLoading(true);
     try {
       const response = await axios.get(`${server}/home`, {
         headers: {memberId: account.id},
       });
       setData(response.data);
       console.log('대외활동 리스트 로드 성공');
+      setLoading(false);
     } catch (error) {
       console.error('대외활동 리스트 로드 실패:', error.message);
+      setLoading(false);
     }
   }
   async function fetchSearchData() {
@@ -161,7 +166,7 @@ function HomeScreen() {
                 placeholder={'공모전, 대외활동, 분야 검색'}
                 value={query}
                 onChangeText={setQuery}
-                autoComplete={false}
+                autoComplete={null}
                 keyboardType={'default'}
                 secureTextEntry={false}
                 onSubmitEditing={() => {
@@ -214,6 +219,7 @@ function HomeScreen() {
                 renderItem={activityRender1}
                 style={null}
                 horizontal={true}
+                showsHorizontalScrollIndicator={false}
               />
             </View>
             <Margin value={24} />
@@ -227,6 +233,7 @@ function HomeScreen() {
                 renderItem={activityRender2}
                 style={null}
                 horizontal={true}
+                showsHorizontalScrollIndicator={false}
               />
             </View>
             <Margin value={24} />
@@ -240,6 +247,7 @@ function HomeScreen() {
                 renderItem={activityRender3}
                 style={null}
                 horizontal={true}
+                showsHorizontalScrollIndicator={false}
               />
             </View>
             <Margin value={24} />
@@ -253,6 +261,7 @@ function HomeScreen() {
                 renderItem={activityRender4}
                 style={null}
                 horizontal={true}
+                showsHorizontalScrollIndicator={false}
               />
             </View>
             <Margin value={70} />
@@ -265,6 +274,7 @@ function HomeScreen() {
           <FlatList data={searchRequest} renderItem={searchRender} />
         </>
       )}
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

@@ -17,12 +17,15 @@ import CustomBoxButton from '../Components/CustomBoxButton';
 import {useNavigation} from '@react-navigation/native';
 import DataContext from '../Contexts/DataContext';
 import axios from 'axios';
+import LoadingScreen from './LoadingScreen';
 
 function LoginScreen() {
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const [change, setChange] = useState(false);
   const {server, account, setAccount} = useContext(DataContext);
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.post(`${server}/login`, {
         id: account.id,
@@ -30,7 +33,9 @@ function LoginScreen() {
       });
       navigation.reset({routes: [{name: 'BottomTab'}]});
       console.log('로그인 성공:', JSON.stringify(account, null, 2));
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       Alert.alert(
         '알림',
         '아이디/비밀번호를 재 확인 해주세요',
@@ -141,6 +146,7 @@ function LoginScreen() {
             <Margin value={30} />
           </View>
         </KeyboardAvoidingView>
+        {loading ? <LoadingScreen /> : null}
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

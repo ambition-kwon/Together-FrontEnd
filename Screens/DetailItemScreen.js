@@ -19,8 +19,10 @@ import PlusIcon from '../Components/PlusIcon';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
 import {useNavigation} from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 function DetailItemScreen({route}) {
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const {server, account} = useContext(DataContext);
   const {itemId} = route.params;
@@ -39,6 +41,7 @@ function DetailItemScreen({route}) {
   });
   const [roomList, setRoomList] = useState('');
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.get(`${server}/home/item`, {
         headers: {itemId: itemId},
@@ -47,6 +50,7 @@ function DetailItemScreen({route}) {
       console.log('대외활동 세부정보 로드 성공');
     } catch (error) {
       console.error('대외활동 세부정보 로드 실패:', error.message);
+      setLoading(false);
     }
     try {
       const response = await axios.get(`${server}/home/item/room`, {
@@ -56,16 +60,21 @@ function DetailItemScreen({route}) {
       console.log('룸 리스트 로드 성공');
     } catch (error) {
       console.error('룸 리스트 로드 실패:', error.message);
+      setLoading(false);
     }
+    setLoading(false);
   }
   async function pickItem() {
+    setLoading(true);
     try {
       const response = await axios.post(`${server}/home/item/pick`, {
         headers: {memberId: account.memberId, pick: 'true', itemId: itemId},
       });
       console.log('찜 성공');
+      setLoading(false);
     } catch (error) {
       console.error('찜 실패:', error.message);
+      setLoading(false);
     }
   }
   const renderItem1 = ({item}) => {
@@ -202,6 +211,7 @@ function DetailItemScreen({route}) {
           </View>
         </>
       )}
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

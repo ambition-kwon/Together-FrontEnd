@@ -1,6 +1,5 @@
 import React from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import LikeItem from '../Components/LikeItem';
 import Margin from '../Components/Margin';
 

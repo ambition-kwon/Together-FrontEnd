@@ -14,8 +14,10 @@ import CustomBoxInput from '../Components/CustomBoxInput';
 import DataContext from '../Contexts/DataContext';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
+import LoadingScreen from './LoadingScreen';
 
 function EditPasswordScreen() {
+  const [loading, setLoading] = useState(false);
   const {account, server} = useContext(DataContext);
   const navigation = useNavigation();
   const [password, setPassword] = useState({
@@ -24,6 +26,7 @@ function EditPasswordScreen() {
     afterPasswordConfirm: '',
   });
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${server}/my/pw`,
@@ -37,8 +40,10 @@ function EditPasswordScreen() {
         },
       );
       console.log('비밀번호 변경 완료');
+      setLoading(false);
     } catch (error) {
       console.error('비밀번호 변경 오류:', error.message);
+      setLoading(false);
     }
   }
   return (
@@ -125,6 +130,7 @@ function EditPasswordScreen() {
             }}
           />
         </View>
+        {loading ? <LoadingScreen /> : null}
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

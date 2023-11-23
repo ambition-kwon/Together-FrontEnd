@@ -6,12 +6,15 @@ import CheckIcon from '../Components/CheckIcon';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
+import LoadingScreen from './LoadingScreen';
 
 function EditKakaoScreen() {
+  const [loading, setLoading] = useState('');
   const [kakaoId, setKakaoId] = useState('');
   const navigation = useNavigation();
   const {server, account} = useContext(DataContext);
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${server}/my/kakaotalkId`,
@@ -23,8 +26,10 @@ function EditKakaoScreen() {
         },
       );
       console.log('KAKAO ID 변경 성공');
+      setLoading(false);
     } catch (error) {
       console.error('KAKAO ID 변경 실패:', error.message);
+      setLoading(false);
     }
   }
   return (
@@ -59,6 +64,7 @@ function EditKakaoScreen() {
           }}
         />
       </View>
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

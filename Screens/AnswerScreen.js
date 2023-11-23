@@ -7,8 +7,10 @@ import CheckIcon from '../Components/CheckIcon';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
+import LoadingScreen from './LoadingScreen';
 
 function AnswerScreen({route}) {
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     fetchData();
   }, []);
@@ -35,6 +37,7 @@ function AnswerScreen({route}) {
   const {server, account} = useContext(DataContext);
   //설문 양식 로드
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.get(`${server}/home/item/room/apply`, {
         headers: {roomId: roomId},
@@ -45,13 +48,15 @@ function AnswerScreen({route}) {
       }));
       setQuestion(data);
       console.log('설문 리스트 로드 성공');
+      setLoading(false);
     } catch (error) {
       console.error('설문 리스트 로드 실패:', error.message);
-      console.log(roomId);
+      setLoading(false);
     }
   }
   //설문 작성 후 전송
   async function sendData() {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${server}/home/item/room/apply/complete`,
@@ -64,8 +69,10 @@ function AnswerScreen({route}) {
         },
       );
       console.log('설문 답변 전송 성공');
+      setLoading(false);
     } catch (error) {
       console.error('설문 답변 전송 실패:', error.message);
+      setLoading(false);
     }
   }
 
@@ -99,6 +106,7 @@ function AnswerScreen({route}) {
           }}
         />
       </View>
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

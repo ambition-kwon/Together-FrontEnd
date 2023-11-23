@@ -14,8 +14,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
 import {useNavigation} from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 function ShowIdScreen({route}) {
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const {roomId} = route.params;
   const [data, setData] = useState([]);
@@ -36,6 +38,7 @@ function ShowIdScreen({route}) {
     fetchData();
   }, []);
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.get(
         `${server}/team-member/creator/showJoined`,
@@ -47,8 +50,10 @@ function ShowIdScreen({route}) {
       );
       setData(response.data);
       console.log('KAKAO ID 조회 성공');
+      setLoading(false);
     } catch (error) {
       console.error('KAKAO ID 조회 실패:', error.message);
+      setLoading(false);
     }
   }
   return (
@@ -81,6 +86,7 @@ function ShowIdScreen({route}) {
       <View style={styles.subContainer}>
         <FlatList data={data} renderItem={renderItem} />
       </View>
+      {loading ? <LoadingScreen /> : null}
     </SafeAreaView>
   );
 }

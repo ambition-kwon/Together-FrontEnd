@@ -15,8 +15,10 @@ import Margin from '../Components/Margin';
 import axios from 'axios';
 import DataContext from '../Contexts/DataContext';
 import {useNavigation} from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 function MyPageScreen() {
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     fetchData();
   }, []);
@@ -25,6 +27,7 @@ function MyPageScreen() {
   const {server, account, setAccount, accountInfo, setAccountInfo} =
     useContext(DataContext);
   async function fetchData() {
+    setLoading(true);
     try {
       const response = await axios.get(`${server}/my`, {
         headers: {
@@ -32,9 +35,11 @@ function MyPageScreen() {
         },
       });
       setAccountInfo(prev => response.data);
-      console.log('MyPage Load Success');
+      console.log('마이페이지 로드 성공');
+      setLoading(false);
     } catch (error) {
-      console.error('mypage 로드 오류:', error.message);
+      console.error('마이페이지 로드 오류:', error.message);
+      setLoading(false);
     }
   }
   return (
@@ -122,7 +127,9 @@ function MyPageScreen() {
           <TouchableOpacity
             style={{alignItems: 'center'}}
             activeOpacity={0.3}
-            onPress={null}>
+            onPress={() => {
+              navigation.navigate('Notice');
+            }}>
             <Icon1 name={'folder-open'} size={30} color={'black'} />
             <Margin value={12} />
             <Text style={styles.iconText}>{'오픈소스\n라이선스'}</Text>
@@ -171,6 +178,7 @@ function MyPageScreen() {
         </View>
       </View>
       <View style={{height: insets.bottom}} />
+      {loading ? <LoadingScreen /> : null}
     </View>
   );
 }
